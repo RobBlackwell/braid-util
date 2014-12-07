@@ -184,7 +184,7 @@ or DEFAULT-MIME-TYPE otherwise."
   "Returns an HTTP-REQUEST handler that serves static files from
 ROOT-PATHSPEC."
   (lambda (http-request)
-    (let ((path (subseq (puri:uri-path (puri:parse-uri (braid:http-request-uri http-request))) 1)))
+    (let ((path (subseq (url-decode (puri:uri-path (puri:parse-uri (braid:http-request-uri http-request)))) 1)))
       (directory-response path root-pathspec))))
 
 (defun uri-to-string (uri)
