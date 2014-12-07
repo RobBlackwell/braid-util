@@ -10,13 +10,14 @@
 	 #:diagnostic-handler
 	 #:merge-headers-response
 	 #:default-condition-handler
+	 #:make-default-condition-response
+	 #:make-condition-response
 	 #:condition-handler
 	 #:set-last-modified
 	 #:set-basic-authorization
 	 #:get-basic-authorization
 	 #:parse-query-params
 	 #:set-query-params
-	 #:combine-http-request-handlers
 	 #:ensure-response
 	 #:ensure-request
 	 #:load-pathname-body
