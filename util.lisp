@@ -32,6 +32,16 @@
 
 (in-package :braid-util)
 
+(defconstant +day-names+
+  #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun")
+  "The three-character names of the seven days of the week - needed
+for cookie date format.")
+
+(defconstant +month-names+
+  #("Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec")
+  "The three-character names of the twelve months - needed for cookie
+date format.")
+
 (defconstant +utf-8+
   (flexi-streams:make-external-format :utf8 :eol-style :lf)
   "A FLEXI-STREAMS external format used internally for logging and to

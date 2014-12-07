@@ -47,7 +47,8 @@ two-column HTML table."
      when (eq (getf p2 indicator notfound) notfound) 
      do (progn
 	  (push value p2)
-	  (push indicator p2))))
+	  (push indicator p2)))
+  p2)
 
 (defun merge-headers (http-message headers)
   "Merges HEADERS with the existing headers in the HTTP-MESSAGE."
@@ -85,8 +86,6 @@ the supplied USERNAME and PASSWORD."
 			 username
 			 password)))))
 
-
-
 (defun get-basic-authorization (http-message)
   "Returns as two values the user and password \(if any) as encoded in
 the 'AUTHORIZATION' header.  Returns NIL if there is no such header."
@@ -111,14 +110,14 @@ the 'AUTHORIZATION' header.  Returns NIL if there is no such header."
 (defun parse-query-params (http-request)
   "Parses the query string from the HTTP-REQUEST URI returning a plist
 of keys and values."
-  (let* ((query-string (puri:uri-query (puri:parse-uri (braid:http-request-uri http-request)))))
+  (let* ((query-string (url-decode (puri:uri-query (puri:parse-uri (braid:http-request-uri http-request))))))
 	(loop for kv in (cl-ppcre:split "&" query-string) appending
 		 (let* ((p (position #\= kv))
 				(k (if p (subseq kv 0 p) kv))
 				(v (if p (subseq kv (1+ p)) "")))
 		   (list (alexandria:make-keyword (string-upcase k)) v)))))
 
-(defun ensure-response (http-response)
+(defun ensure-http-response (http-response)
   "Turns a shorthand response such as a string or pathname into a full
 Braid response."
   (typecase http-response
@@ -129,7 +128,7 @@ Braid response."
 	(braid:http-response http-response)
 	(t (braid:make-http-response :body (format nil "~a" http-response)))))
 
-(defun ensure-request (http-request)
+(defun ensure-http-request (http-request)
   "Turns a shorthand request such as a string URI into a full Braid
 request."
   (typecase http-request
@@ -138,8 +137,7 @@ request."
 	(braid:http-request http-request)
 	(t (braid:make-http-request :uri (format nil "~a" http-request)))))
 
-;; set-body-pathname-to-bytes?
-(defun load-pathname-body (http-message)
+(defun set-body-pathname-to-bytes (http-message)
   "Replaces a pathname body with a byte vector being
 the contents of the file designated by the pathname. "
   (when (typep (braid:http-message-body http-message) 'pathname)
@@ -149,10 +147,9 @@ the contents of the file designated by the pathname. "
 (defun utf-8-bytes-to-string (sequence)
   (flexi-streams:octets-to-string sequence :external-format braid-util::+utf-8+))
 
-;; set-body-utf-8-bytes-to-string?
-(defun utf-8-bytes-to-string-body (http-message)
+(defun set-body-utf-8-bytes-to-string (http-message)
   (when (typep (braid:http-message-body http-message) '(simple-array (unsigned-byte 8)))
-	(setf (braid:http-message-body http-message) (utf-8-byes-to-string (braid:http-message-body http-message)))))
+	(setf (braid:http-message-body http-message) (utf-8-bytes-to-string (braid:http-message-body http-message)))))
 
 (defun my-file-exists-p (pathspec)
   "Returns T if PATHSPEC exists and doesn't designate a directory."
