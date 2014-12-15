@@ -117,6 +117,9 @@ of keys and values."
 				(v (if p (subseq kv (1+ p)) "")))
 		   (list (alexandria:make-keyword (string-upcase k)) v)))))
 
+
+
+
 (defun ensure-http-response (http-response)
   "Turns a shorthand response such as a string or pathname into a full
 Braid response."
@@ -150,6 +153,16 @@ the contents of the file designated by the pathname. "
 (defun set-body-utf-8-bytes-to-string (http-message)
   (when (typep (braid:http-message-body http-message) '(simple-array (unsigned-byte 8)))
 	(setf (braid:http-message-body http-message) (utf-8-bytes-to-string (braid:http-message-body http-message)))))
+
+(defun parse-form-params (http-request)
+  ""
+  (set-body-utf-8-bytes-to-string http-request)
+  (let* ((query-string (url-decode (braid:http-message-body http-request))))
+	(loop for kv in (cl-ppcre:split "&" query-string) appending
+		 (let* ((p (position #\= kv))
+				(k (if p (subseq kv 0 p) kv))
+				(v (if p (subseq kv (1+ p)) "")))
+		   (list (alexandria:make-keyword (string-upcase k)) v)))))
 
 (defun my-file-exists-p (pathspec)
   "Returns T if PATHSPEC exists and doesn't designate a directory."

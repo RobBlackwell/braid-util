@@ -14,9 +14,11 @@
    #:make-condition-response
    #:condition-handler
    #:set-last-modified
+   #:make-not-authorized-response
    #:set-basic-authorization
    #:get-basic-authorization
    #:parse-query-params
+   #:parse-form-params
    #:set-query-params
    #:ensure-http-response
    #:ensure-http-request
